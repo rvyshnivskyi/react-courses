@@ -1,20 +1,24 @@
-import {Waiter} from "./type";
-import React, {useState} from "react";
+import {WaiterI} from "./type";
+import React, {useEffect, useState} from "react";
 
 interface FormEditProps {
-    onWaiterSubmit: (waiter: Waiter) => void;
+    waiter: WaiterI;
+    onWaiterSubmit: (waiter: WaiterI) => void;
 }
 
-export function FormEdit({onWaiterSubmit}: FormEditProps) {
-    const [firstName, setFirstName] = useState('');
-    const [phone, setPhone] = useState('');
+export function FormEdit({waiter, onWaiterSubmit}: FormEditProps) {
+    const [firstName, setFirstName] = useState(waiter.firstName);
+    const [phone, setPhone] = useState(waiter.phone);
+
+    useEffect(() => {
+        setFirstName(waiter.firstName);
+        setPhone(waiter.phone);
+    }, [waiter]);
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        onWaiterSubmit({firstName, phone});
 
-        setFirstName('');
-        setPhone('');
+        onWaiterSubmit({...waiter, firstName, phone});
     }
 
     return (
