@@ -1,32 +1,16 @@
 import {FormEdit} from "./FormEdit";
-import {Waiter} from "./type";
 import {WaitersList} from "./WaitersList";
-import {useEffect, useState} from "react";
-import {WaitersApi} from "./api/WaitersApi";
+import {useWaiter} from "./hooks/useWaiter";
 
-interface WaitersAppParams {
-    waitersApi: WaitersApi;
-}
+export function WaitersApp() {
 
-export function WaitersApp({waitersApi}: WaitersAppParams) {
-
-    const [waiters, setWaiters] = useState<Waiter[]>([]);
-
-    useEffect(() => {
-        waitersApi.getList().then(waiters => setWaiters(waiters))
-    }, []);
-
-    // create waters api class
-    const onWaiterSubmit = (waiter: Waiter) => {
-        waitersApi.create(waiter)
-            .then(waiter => setWaiters([...waiters, waiter]));
-    }
+    const {editingWaiter, onWaiterSubmit, waiters, editWaiter, deleteWaiter} = useWaiter();
 
     return (
         <div>
-            <FormEdit onWaiterSubmit={onWaiterSubmit}/>
+            <FormEdit waiter={editingWaiter} onWaiterSubmit={onWaiterSubmit}/>
             <br/>
-            <WaitersList waiters={waiters}/>
+            <WaitersList waiters={waiters} editWaiter={editWaiter} deleteWaiter={deleteWaiter}/>
         </div>
     )
 }

@@ -1,11 +1,13 @@
-import {Waiter} from "./type";
+import {WaiterI} from "./type";
 import {WaitersListItem} from "./WaitersListItem";
 
 interface WaitersListProps {
-    waiters: Waiter[];
+    waiters: WaiterI[];
+    editWaiter: (waiter: WaiterI) => void;
+    deleteWaiter: (id: number) => void;
 }
 
-export function WaitersList({waiters}: WaitersListProps) {
+export function WaitersList({waiters, editWaiter, deleteWaiter}: WaitersListProps) {
     return (
         <table>
             <thead>
@@ -16,7 +18,13 @@ export function WaitersList({waiters}: WaitersListProps) {
             </tr>
             </thead>
             <tbody>
-            {waiters.map(waiter => <WaitersListItem key={waiter.id} waiter={waiter}/>)}
+            {waiters.map(waiter =>
+                <WaitersListItem
+                    key={waiter.id}
+                    waiter={waiter}
+                    editWaiter={editWaiter}
+                    deleteWaiter={deleteWaiter}
+                />)}
             </tbody>
         </table>
     );
