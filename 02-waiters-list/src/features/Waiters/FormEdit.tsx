@@ -1,12 +1,11 @@
-import {WaiterI} from "./type";
 import React, {useEffect, useState} from "react";
+import {useDispatch, useSelector} from "react-redux";
+import {saveWaiter} from "./store/thunk";
 
-interface FormEditProps {
-    waiter: WaiterI;
-    onWaiterSubmit: (waiter: WaiterI) => void;
-}
 
-export function FormEdit({waiter, onWaiterSubmit}: FormEditProps) {
+export function FormEdit() {
+    const dispatch = useDispatch();
+    const waiter = useSelector((state: any) => state.waiters.editingWaiter);
     const [firstName, setFirstName] = useState(waiter.firstName);
     const [phone, setPhone] = useState(waiter.phone);
 
@@ -18,7 +17,9 @@ export function FormEdit({waiter, onWaiterSubmit}: FormEditProps) {
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
 
-        onWaiterSubmit({...waiter, firstName, phone});
+        const newWaiter = {...waiter, firstName, phone};
+        // @ts-ignore
+        dispatch(saveWaiter(newWaiter));
     }
 
     return (

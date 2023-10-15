@@ -13,7 +13,13 @@ export class FetchClient<T> {
             headers: {
                 'Content-Type': 'application/json'
             }
-        }).then(response => response.json())
+        }).then(response => {
+            if (response.ok) { // 200-299
+                return response.json() // Promise
+            }
+
+            throw new Error(response.statusText)
+        })
     }
 
     create = (data: T) => this.request('', 'POST', data);
@@ -23,5 +29,6 @@ export class FetchClient<T> {
     // delete method
     delete = (id: number) => this.request('/' + String(id), 'DELETE')
 
-    getList = () => this.request();
+    getList = () => this.request()
+        .catch((e) => Promise.reject(Error(`Can't fetch list from server: ${e.message}`)));
 }
