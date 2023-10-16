@@ -1,5 +1,13 @@
-import {applyMiddleware, createStore} from "redux";
-import {rootReducer} from "./reducer";
-import thunk from "redux-thunk";
+import { configureStore } from '@reduxjs/toolkit'
+import { reducer as waitersReducer } from "../features/Waiters/store/reducer";
 
-export const store = createStore(rootReducer, applyMiddleware(thunk));
+export const store = configureStore({
+    reducer: {
+        waiters: waitersReducer,
+    },
+})
+
+// Infer the `RootState` and `AppDispatch` types from the store itself
+export type RootState = ReturnType<typeof store.getState>
+// Inferred type: {posts: PostsState, comments: CommentsState, users: UsersState}
+export type AppDispatch = typeof store.dispatch

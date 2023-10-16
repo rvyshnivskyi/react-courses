@@ -1,12 +1,12 @@
 export class FetchClient<T> {
 
-    private baseUrl: string;
+    baseUrl: string;
 
     constructor(baseUrl: string) {
         this.baseUrl = baseUrl;
     }
 
-    request = (path = '', method = 'GET', data?: T): Promise<any> => {
+    request = async (path = '', method = 'GET', data?: T): Promise<any> => {
         return fetch(`${this.baseUrl}${path}`, {
             method,
             body: JSON.stringify(data),
@@ -22,13 +22,37 @@ export class FetchClient<T> {
         })
     }
 
-    create = (data: T) => this.request('', 'POST', data);
+    create = async (data: T) => {
+        try {
+            return await this.request('', 'POST', data)
+        } catch (e: any) {
+            throw new Error(`Can't create item: ${e.message}`)
+        }
 
-    update = (id: number, data: T) => this.request('/' + String(id), 'PUT', data)
+    }
+
+    update = async (id: number, data: T) => {
+        try {
+            return await this.request('/' + String(id), 'PUT', data)
+        } catch (e: any) {
+            throw new Error(`Can't update item: ${e.message}`)
+        }
+    }
 
     // delete method
-    delete = (id: number) => this.request('/' + String(id), 'DELETE')
+    delete = async (id: number) => {
+        try {
+            return await this.request('/' + String(id), 'DELETE')
+        } catch (e: any) {
+            throw new Error(`Can't delete item: ${e.message}`)
+        }
+    }
 
-    getList = () => this.request()
-        .catch((e) => Promise.reject(Error(`Can't fetch list from server: ${e.message}`)));
+    getList = async () => {
+        try {
+            return await this.request()
+        } catch (e: any) {
+            throw new Error(`Can't fetch list from server: ${e.message}`)
+        }
+    }
 }

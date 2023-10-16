@@ -1,4 +1,5 @@
 import {WaiterI} from "../type";
+import {WaitersApi} from "../api/server";
 import {
     createWaiterAction,
     deleteWaiterAction,
@@ -6,28 +7,24 @@ import {
     updateWaiterAction,
     waitersListLoadedAction,
     waitersListLoadingErrorAction
-} from "./actions";
-import {WaitersApi} from "../api/server";
+} from "./reducer";
 
 export function saveWaiter(waiter: WaiterI) {
-    return (dispatch: any) => {
+    return async (dispatch: any) => {
         if (waiter.id) {
-            WaitersApi.update(waiter.id, waiter).then((updatedWaiter) => {
-                dispatch(updateWaiterAction(updatedWaiter))
-            })
+            const updatedWaiter = await WaitersApi.update(waiter.id, waiter)
+            dispatch(updateWaiterAction(updatedWaiter))
         } else {
-            WaitersApi.create(waiter).then((newWaiter) => {
-                dispatch(createWaiterAction(newWaiter))
-            })
+            const newWaiter = await WaitersApi.create(waiter)
+            dispatch(createWaiterAction(newWaiter))
         }
     }
 }
 
 export function deleteWaiter(id: number) {
-    return (dispatch: any) => {
-        WaitersApi.delete(id).then(() => {
-            dispatch(deleteWaiterAction(id))
-        })
+    return async (dispatch: any) => {
+        await WaitersApi.delete(id)
+        dispatch(deleteWaiterAction(id))
     }
 }
 

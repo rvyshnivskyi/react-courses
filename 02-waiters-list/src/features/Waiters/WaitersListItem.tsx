@@ -1,7 +1,9 @@
 import {WaiterI} from "./type";
-import {setEditingWaiterAction} from "./store/actions";
 import {useDispatch} from "react-redux";
 import {deleteWaiter} from "./store/thunk";
+import {useState} from "react";
+import {delay} from "./utils";
+import {setEditingWaiterAction} from "./store/reducer";
 
 interface WaitersListItemPropsI {
     waiter: WaiterI
@@ -9,15 +11,27 @@ interface WaitersListItemPropsI {
 
 export function WaitersListItem({waiter} : WaitersListItemPropsI) {
     const dispatch = useDispatch();
+    const [deleting, setDeleting] = useState(false)
+    const [deletingError, setDeletingError] = useState('')
 
     function onEditBtnClick(ignored: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
         dispatch(setEditingWaiterAction(waiter));
     }
 
-    function onDeleteBtnClick(ignored: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
+    async function onDeleteBtnClick(ignored: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
         if (waiter.id) {
-            // @ts-ignore
-            dispatch(deleteWaiter(waiter.id));
+            setDeleting(true)
+            setDeletingError('')
+            try {
+                // @ts-ignore
+                await dispatch(deleteWaiter(waiter.id));
+            } catch (e: any) {
+                setDeletingError(e.message)
+            } finally {
+                setDeleting(false)
+                await delay(3000)
+                setDeletingError('')
+            }
         }
     }
 
@@ -26,9 +40,10 @@ export function WaitersListItem({waiter} : WaitersListItemPropsI) {
             <td>{waiter.firstName}</td>
             <td>{waiter.phone}</td>
             <td>
-                <button onClick={onEditBtnClick}>Edit</button>
-                <button onClick={onDeleteBtnClick}>Delete</button>
+                <button onClick={onEditBtnClick} disabled={deleting}>Edit</button>
+                <button onClick={onDeleteBtnClick} disabled={deleting}>Delete</button>
             </td>
+            {deletingError && <span style={{color: 'red'}}>{deletingError}</span>}
         </tr>
     );
 }
