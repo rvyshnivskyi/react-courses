@@ -55,4 +55,12 @@ export class FetchClient<T> {
             throw new Error(`Can't fetch list from server: ${e.message}`)
         }
     }
+
+    getOne = async (id: number) => {
+        try {
+            return await this.request('/' + String(id))
+        } catch (e: any) {
+            throw new Error(`Can't fetch item from server: ${e.message}`)
+        }
+    }
 }

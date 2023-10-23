@@ -3,6 +3,9 @@ import {WaitersApi} from "../api/server";
 import {
     createWaiterAction,
     deleteWaiterAction,
+    editingWaiterLoadedAction,
+    editingWaiterLoadingErrorAction,
+    startEditingWaiterLoadingAction,
     startWaitersListLoadingAction,
     updateWaiterAction,
     waitersListLoadedAction,
@@ -37,7 +40,21 @@ export function getWaitersList() {
                 dispatch(waitersListLoadedAction(waiters))
             })
             .catch((error) => {
-                dispatch(waitersListLoadingErrorAction(error))
+                dispatch(waitersListLoadingErrorAction(error.message))
             })
+    }
+}
+
+export function getEditingWaiter(id: number) {
+    return async (dispatch: any) => {
+        dispatch(startEditingWaiterLoadingAction())
+
+        try {
+            const editingWaiter = await WaitersApi.getOne(id)
+
+            dispatch(editingWaiterLoadedAction(editingWaiter))
+        } catch (error: any) {
+            dispatch(editingWaiterLoadingErrorAction(error.message))
+        }
     }
 }

@@ -3,7 +3,7 @@ import {useDispatch} from "react-redux";
 import {deleteWaiter} from "./store/thunk";
 import {useState} from "react";
 import {delay} from "./utils";
-import {setEditingWaiterAction} from "./store/reducer";
+import {Link} from "react-router-dom";
 
 interface WaitersListItemPropsI {
     waiter: WaiterI
@@ -13,10 +13,6 @@ export function WaitersListItem({waiter} : WaitersListItemPropsI) {
     const dispatch = useDispatch();
     const [deleting, setDeleting] = useState(false)
     const [deletingError, setDeletingError] = useState('')
-
-    function onEditBtnClick(ignored: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
-        dispatch(setEditingWaiterAction(waiter));
-    }
 
     async function onDeleteBtnClick(ignored: React.MouseEvent<HTMLButtonElement, MouseEvent>) {
         if (waiter.id) {
@@ -40,7 +36,7 @@ export function WaitersListItem({waiter} : WaitersListItemPropsI) {
             <td>{waiter.firstName}</td>
             <td>{waiter.phone}</td>
             <td>
-                <button onClick={onEditBtnClick} disabled={deleting}>Edit</button>
+                <Link to={`/waiters/${waiter.id}/edit`}><button disabled={deleting}>Edit</button></Link>
                 <button onClick={onDeleteBtnClick} disabled={deleting}>Delete</button>
             </td>
             {deletingError && <span style={{color: 'red'}}>{deletingError}</span>}
